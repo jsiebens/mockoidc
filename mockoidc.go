@@ -20,6 +20,7 @@ var NowFunc = time.Now
 // MockOIDC is a minimal OIDC server for use in OIDC authentication
 // integration testing.
 type MockOIDC struct {
+	ServerURL    string
 	ClientID     string
 	ClientSecret string
 
@@ -103,6 +104,17 @@ func RunTLS(cfg *tls.Config) (*MockOIDC, error) {
 	return m, m.Start(ln, cfg)
 }
 
+func (m *MockOIDC) Handler() (string, http.Handler) {
+	handler := http.NewServeMux()
+	handler.Handle(AuthorizationEndpoint, m.chainMiddleware(m.Authorize))
+	handler.Handle(TokenEndpoint, m.chainMiddleware(m.Token))
+	handler.Handle(UserinfoEndpoint, m.chainMiddleware(m.Userinfo))
+	handler.Handle(JWKSEndpoint, m.chainMiddleware(m.JWKS))
+	handler.Handle(DiscoveryEndpoint, m.chainMiddleware(m.Discovery))
+
+	return IssuerBase, handler
+}
+
 // Start starts the MockOIDC server in its own Goroutine on the provided
 // net.Listener. In generic `Run`, this defaults to `127.0.0.1:0`
 func (m *MockOIDC) Start(ln net.Listener, cfg *tls.Config) error {
@@ -110,12 +122,7 @@ func (m *MockOIDC) Start(ln net.Listener, cfg *tls.Config) error {
 		return errors.New("server already started")
 	}
 
-	handler := http.NewServeMux()
-	handler.Handle(AuthorizationEndpoint, m.chainMiddleware(m.Authorize))
-	handler.Handle(TokenEndpoint, m.chainMiddleware(m.Token))
-	handler.Handle(UserinfoEndpoint, m.chainMiddleware(m.Userinfo))
-	handler.Handle(JWKSEndpoint, m.chainMiddleware(m.JWKS))
-	handler.Handle(DiscoveryEndpoint, m.chainMiddleware(m.Discovery))
+	_, handler := m.Handler()
 
 	m.Server = &http.Server{
 		Addr:      ln.Addr().String(),
@@ -210,6 +217,10 @@ func (m *MockOIDC) Synchronize() TimeReset {
 
 // Addr returns the server address (if started)
 func (m *MockOIDC) Addr() string {
+	if m.ServerURL != "" {
+		return m.ServerURL
+	}
+
 	if m.Server == nil {
 		return ""
 	}
@@ -222,49 +233,31 @@ func (m *MockOIDC) Addr() string {
 
 // Issuer returns the OIDC Issuer that will be in `iss` token claims
 func (m *MockOIDC) Issuer() string {
-	if m.Server == nil {
-		return ""
-	}
 	return m.Addr() + IssuerBase
 }
 
 // DiscoveryEndpoint returns the full `/.well-known/openid-configuration` URL
 func (m *MockOIDC) DiscoveryEndpoint() string {
-	if m.Server == nil {
-		return ""
-	}
 	return m.Addr() + DiscoveryEndpoint
 }
 
 // AuthorizationEndpoint returns the OIDC `authorization_endpoint`
 func (m *MockOIDC) AuthorizationEndpoint() string {
-	if m.Server == nil {
-		return ""
-	}
 	return m.Addr() + AuthorizationEndpoint
 }
 
 // TokenEndpoint returns the OIDC `token_endpoint`
 func (m *MockOIDC) TokenEndpoint() string {
-	if m.Server == nil {
-		return ""
-	}
 	return m.Addr() + TokenEndpoint
 }
 
 // UserinfoEndpoint returns the OIDC `userinfo_endpoint`
 func (m *MockOIDC) UserinfoEndpoint() string {
-	if m.Server == nil {
-		return ""
-	}
 	return m.Addr() + UserinfoEndpoint
 }
 
 // JWKSEndpoint returns the OIDC `jwks_uri`
 func (m *MockOIDC) JWKSEndpoint() string {
-	if m.Server == nil {
-		return ""
-	}
 	return m.Addr() + JWKSEndpoint
 }
 
