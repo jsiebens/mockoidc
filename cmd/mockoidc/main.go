@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/jsiebens/mockoidc"
+	"github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
+	"github.com/jsiebens/mockoidc/pkg/service"
 	"github.com/labstack/echo/v4"
-	"github.com/oauth2-proxy/mockoidc"
-	"github.com/oauth2-proxy/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
-	"github.com/oauth2-proxy/mockoidc/pkg/service"
 	"github.com/spf13/cobra"
 	"os"
 )

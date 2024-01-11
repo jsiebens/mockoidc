@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"github.com/bufbuild/connect-go"
-	"github.com/oauth2-proxy/mockoidc"
-	v1 "github.com/oauth2-proxy/mockoidc/pkg/gen/mockoidc/v1"
-	"github.com/oauth2-proxy/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
+	"github.com/jsiebens/mockoidc"
+	v1 "github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1"
+	"github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
 )
 
 func New(queue *mockoidc.UserQueue) mockoidcv1connect.MockOIDCServiceHandler {

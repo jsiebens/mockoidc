@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/oauth2-proxy/mockoidc"
+	"github.com/jsiebens/mockoidc"
 	"github.com/stretchr/testify/assert"
 )
 

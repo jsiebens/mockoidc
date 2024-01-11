@@ -2,7 +2,7 @@ package mockoidc
 
 import (
 	"crypto/tls"
-	"github.com/oauth2-proxy/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
+	"github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
 	"net/http"
 )
 

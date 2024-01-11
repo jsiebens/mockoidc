@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package mockoidc.v1;
 
-option go_package = "github.com/oauth2-proxy/mockoidc/pkg/gen/mockoidc/v1;mockoidcv1";
+option go_package = "github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1;mockoidcv1";
 
 service MockOIDCService {
   rpc PushUser(PushUserRequest) returns (PushUserResponse) {}
